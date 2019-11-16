@@ -1,0 +1,22 @@
+DROP PROCEDURE
+IF
+	EXISTS swap_name;
+CREATE PROCEDURE swap_name () BEGIN
+	declare done int default 1;
+	declare i int default 0;
+	declare id int;
+	declare stu_name varchar(100);
+	declare fe cursor for select student_name from student order by student_id desc; 
+	declare continue handler for not found set done=0;
+	
+	open fe;
+	fetch fe into stu_name;
+	repeat
+	select student_id into id from student order by student_id asc limit i,1;
+	update student set student_name=stu_name where student_id=id;
+	fetch fe into stu_name;
+	set i=i+1;
+	until done=0 end repeat;
+	
+END;
+CALL swap_name ();
